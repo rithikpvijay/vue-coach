@@ -1,6 +1,10 @@
 <template>
   <div>
-    <base-dialog :show="!!error" title="Something went wrong">
+    <base-dialog
+      :show="!!error"
+      title="Something went wrong"
+      @close="handleClose"
+    >
       <p>{{ error }}</p>
     </base-dialog>
 
@@ -18,7 +22,9 @@
             :message="request.message"
           ></request-item>
         </ul>
-        <h3 v-else>You haven't received any request yet.</h3>
+        <h3 v-if="!hasRequest && !isLoading">
+          You haven't received any request yet.
+        </h3>
       </base-card>
     </section>
   </div>
@@ -51,6 +57,9 @@ export default {
   },
 
   methods: {
+    handleClose() {
+      this.error = null;
+    },
     async loadRequest() {
       try {
         this.isLoading = true;
@@ -58,6 +67,8 @@ export default {
         this.isLoading = false;
       } catch (error) {
         this.error = error.message || "Something went wrong";
+      } finally {
+        this.isLoading = false;
       }
     },
   },
